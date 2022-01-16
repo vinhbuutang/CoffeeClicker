@@ -152,7 +152,10 @@ function tick(data) {
   // your code here
   data.coffee += data.totalCPS;
   updateCoffeeView(data.coffee);
+  updateCPSView(data.totalCPS);
   renderProducers(data);
+  // add localStorage setup
+  window.localStorage.setItem("data", JSON.stringify(data));
 }
 
 /*************************
@@ -172,7 +175,8 @@ function tick(data) {
 if (typeof process === "undefined") {
   // Get starting data from the window object
   // (This comes from data.js)
-  const data = window.data;
+  // const data = window.data;
+  const data = JSON.parse(window.localStorage.getItem("data"));
 
   // Add an event listener to the giant coffee emoji
   const bigCoffee = document.getElementById("big_coffee");
