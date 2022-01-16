@@ -3,7 +3,9 @@ const { expect, assert } = require("chai");
 
 // JSDOM lets us pretend we're in a web browser even through we're running this code in Node. Here, we import JSOM and create fake document and window objects. We assign these to global so they're available to your code, when we run it.
 const { JSDOM } = require("jsdom");
-const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
+// const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
+const window = new JSDOM(``, { url: "http://127.0.0.1:5500/" }).window;
+
 const { document } = window;
 global.window = window;
 global.document = document;
