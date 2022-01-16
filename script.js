@@ -4,15 +4,21 @@
  *   SLICE 1
  **************/
 
+// separateNumber function will display the number with comma separator
+// function separateNumber(number) {
+//   return Intl.NumberFormat("en-US").format(number);
+// }
+
 function updateCoffeeView(coffeeQty) {
   // your code here
-  // console.log(document.getElementById("coffee_counter"));
   document.getElementById("coffee_counter").innerText = coffeeQty;
+  // document.getElementById("coffee_counter").innerText = separateNumber(coffeeQty);
 }
 
 // updateCoffeeView(1000);
 function clickCoffee(data) {
   // your code here
+  // data.coffee = data.coffee.toLocaleString("en-US");
   data.coffee++;
   updateCoffeeView(data.coffee);
   renderProducers(data);
@@ -59,11 +65,14 @@ function makeProducerDiv(producer) {
   const displayName = makeDisplayNameFromId(producer.id);
   const currentCost = producer.price;
   const html = `
-  <div class="producer-column">
+  <div class="producer-column product">
     <div class="producer-title">${displayName}</div>
-    <button type="button" id="buy_${producer.id}">Buy</button>
+    <div class="button">
+      <button type="button" class="buy" id="buy_${producer.id}">Buy</button>
+      <button type="button" class="sell" id="sell_${producer.id}">Sell</button>
+    </div>
   </div>
-  <div class="producer-column">
+  <div class="producer-column stats">
     <div>Quantity: ${producer.qty}</div>
     <div>Coffee/second: ${producer.cps}</div>
     <div>Cost: ${currentCost} coffee</div>
@@ -113,6 +122,8 @@ function canAffordProducer(data, producerId) {
 function updateCPSView(cps) {
   // your code here
   document.getElementById("cps").innerText = cps;
+
+  // document.getElementById("cps").innerText = separateNumber(cps);
 }
 
 function updatePrice(oldPrice) {
@@ -135,15 +146,21 @@ function attemptToBuyProducer(data, producerId) {
 
 function buyButtonClick(event, data) {
   // your code here
+  // console.dir(event.target);
+  // console.log("triggered");
   if (event.target.tagName === "BUTTON") {
-    let producerId = event.target.id.substring(4);
+    if (event.target.id.includes("buy")) {
+      let producerId = event.target.id.substring(4);
 
-    if (!attemptToBuyProducer(data, producerId)) {
-      window.alert("Not enough coffee!");
-    } else {
-      renderProducers(data);
-      updateCoffeeView(data.coffee);
-      updateCPSView(data.totalCPS);
+      if (!attemptToBuyProducer(data, producerId)) {
+        window.alert("Not enough coffee!");
+      } else {
+        renderProducers(data);
+        updateCoffeeView(data.coffee);
+        updateCPSView(data.totalCPS);
+      }
+    } else if (event.target.className === "sell") {
+      sellButtonClick(event, data);
     }
   }
 }
@@ -156,6 +173,35 @@ function tick(data) {
   renderProducers(data);
   // add localStorage setup
   window.localStorage.setItem("data", JSON.stringify(data));
+}
+
+/**************
+ *   EXTRA FEATURES
+ **************/
+// sell producers and get coffee back
+function canSellProducer(data, producerId) {
+  return getProducerById(data, producerId).qty >= 1;
+}
+
+function attemptToSellProducer(data, producerId) {
+  if (canSellProducer(data, producerId)) {
+    let producer = getProducerById(data, producerId);
+    producer.qty--;
+    data.coffee += Math.round(producer.price * 0.8);
+    data.totalCPS -= producer.cps;
+    return true;
+  }
+  if (!canSellProducer(data, producerId)) return false;
+}
+function sellButtonClick(event, data) {
+  let producerId = event.target.id.substring(5);
+  if (!attemptToSellProducer(data, producerId)) {
+    window.alert("No producer for selling!");
+  } else {
+    renderProducers(data);
+    updateCoffeeView(data.coffee);
+    updateCPSView(data.totalCPS);
+  }
 }
 
 /*************************
@@ -175,9 +221,17 @@ function tick(data) {
 if (typeof process === "undefined") {
   // Get starting data from the window object
   // (This comes from data.js)
-  // const data = window.data;
-  const data = JSON.parse(window.localStorage.getItem("data"));
 
+  // check to see if localStorage exist for using
+  let data;
+  if (window.localStorage.length === 0) {
+    data = window.data;
+  } else {
+    data = JSON.parse(window.localStorage.getItem("data"));
+  }
+  // const data = window.data;
+
+  // data.coffee = data.coffee.toLocaleString("en-US");
   // Add an event listener to the giant coffee emoji
   const bigCoffee = document.getElementById("big_coffee");
   bigCoffee.addEventListener("click", () => clickCoffee(data));
