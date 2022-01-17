@@ -172,7 +172,7 @@ function tick(data) {
   updateCPSView(data.totalCPS);
   renderProducers(data);
   // add localStorage setup
-  window.localStorage.setItem("data", JSON.stringify(data));
+  // window.localStorage.setItem("data", JSON.stringify(data));
 }
 
 /**************
