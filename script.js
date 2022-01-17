@@ -224,11 +224,11 @@ if (typeof process === "undefined") {
 
   // check to see if localStorage exist for using
   let data = window.data;
-  if (window.localStorage.length === 0) {
-    data = window.data;
-  } else {
-    data = JSON.parse(window.localStorage.getItem("data"));
-  }
+//   if (window.localStorage.length === 0) {
+//     data = window.data;
+//   } else {
+//     data = JSON.parse(window.localStorage.getItem("data"));
+//   }
   // const data = window.data;
 
   // data.coffee = data.coffee.toLocaleString("en-US");
