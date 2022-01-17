@@ -223,7 +223,7 @@ if (typeof process === "undefined") {
   // (This comes from data.js)
 
   // check to see if localStorage exist for using
-  let data;
+  let data = window.data;
   if (window.localStorage.length === 0) {
     data = window.data;
   } else {
